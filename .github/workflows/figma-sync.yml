@@ -1,5 +1,6 @@
 name: Figma to GitHub Sync
 on:
+  workflow_dispatch:
   repository_dispatch:
     types: [figma-update]
 

@@ -3,32 +3,28 @@ on:
   workflow_dispatch:
     inputs:
       fileKey:
-        description: 'The Figma File Key'
+        description: 'Figma File Key'
         required: true
       page:
-        description: 'The Figma Page Name'
+        description: 'Figma Page'
         required: false
       selection:
-        description: 'The Figma Selection'
+        description: 'Figma Selection'
         required: false
 
 jobs:
-  build:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Sync Design Data
+      - name: Process Figma Design
         run: |
-          echo "Processing Figma File Key: ${{ github.event.inputs.fileKey }}"
-          echo "Processing Selection: ${{ github.event.inputs.selection }}"
-          
-          # This creates a log or updates a file so GitHub has something to commit
+          echo "Syncing from File: ${{ github.event.inputs.fileKey }}"
           echo "Last Sync: $(date)" > last_sync.txt
-          
           git config --global user.name "SubZero-Bot"
           git config --global user.email "bot@subzero.io"
           git add .
-          git commit -m "Design update from Figma - ${{ github.event.inputs.fileKey }}" || echo "No changes"
+          git commit -m "Design update from Figma" || echo "No changes"
           git push

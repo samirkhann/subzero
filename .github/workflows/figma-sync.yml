@@ -1,8 +1,16 @@
 name: Figma to GitHub Sync
 on:
   workflow_dispatch:
-  repository_dispatch:
-    types: [figma-update]
+    inputs:
+      fileKey:
+        description: 'The Figma File Key'
+        required: true
+      page:
+        description: 'The Figma Page Name'
+        required: false
+      selection:
+        description: 'The Figma Selection'
+        required: false
 
 jobs:
   build:
@@ -11,14 +19,16 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
-      - name: Update Subzero Site
+      - name: Sync Design Data
         run: |
-          echo "Updating files from Figma..."
-          # This assumes your plugin sends an index.html file
-          # If the plugin doesn't send the file directly, 
-          # you'll manually add the code it generated here.
+          echo "Processing Figma File Key: ${{ github.event.inputs.fileKey }}"
+          echo "Processing Selection: ${{ github.event.inputs.selection }}"
+          
+          # This creates a log or updates a file so GitHub has something to commit
+          echo "Last Sync: $(date)" > last_sync.txt
+          
           git config --global user.name "SubZero-Bot"
           git config --global user.email "bot@subzero.io"
           git add .
-          git commit -m "Design update from Figma" || echo "No changes to commit"
+          git commit -m "Design update from Figma - ${{ github.event.inputs.fileKey }}" || echo "No changes"
           git push
